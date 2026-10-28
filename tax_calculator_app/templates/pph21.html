@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kalkulator PPh 21 TER</title>
+    <style>
+        :root {
+            --bg-main: #f1f5f9;
+            --card-bg: #ffffff;
+            --primary: #0284c7;
+            --primary-hover: #0369a1;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --radius: 0.75rem;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', system-ui, -apple-system, sans-serif; }
+        body { background-color: var(--bg-main); color: var(--text-main); padding: 2rem; max-width: 800px; margin: 0 auto; }
+        .card { background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius); padding: 2rem; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); margin-bottom: 1.5rem; }
+        h1 { color: var(--primary); font-size: 1.5rem; margin-bottom: 1.5rem; }
+        .form-group { margin-bottom: 1.25rem; }
+        label { display: block; font-weight: 600; font-size: 0.875rem; margin-bottom: 0.5rem; }
+        input, select { width: 100%; padding: 0.75rem; border: 1px solid var(--border); border-radius: 0.5rem; font-size: 0.875rem; background: #fff; }
+        .btn { background: var(--primary); color: #fff; padding: 0.75rem 1.5rem; border: none; border-radius: 0.5rem; font-weight: 600; cursor: pointer; width: 100%; }
+        .btn:hover { background: var(--primary-hover); }
+        .result-box { background: #f8fafc; border: 1px solid var(--border); border-radius: 0.5rem; padding: 1.5rem; margin-top: 1.5rem; }
+        .result-row { display: flex; justify-content: space-between; margin-bottom: 0.75rem; font-size: 0.95rem; }
+        .result-row strong { color: var(--text-main); }
+        .back-link { display: inline-block; margin-bottom: 1rem; color: var(--primary); text-decoration: none; font-weight: 600; font-size: 0.875rem; }
+    </style>
+</head>
+<body>
+    <a href="/" class="back-link">← Kembali ke Menu Utama</a>
+    <div class="card">
+        <h1>Kalkulator PPh Pasal 21 (Tarif Efektif Rata-rata / TER)</h1>
+        
+        <div style="background: #f8fafc; border-left: 4px solid var(--primary); padding: 1rem; margin-bottom: 1.5rem; border-radius: 0.375rem; font-size: 0.875rem; color: #334155;">
+            <strong>Panduan Kategori & Status PPh 21:</strong>
+            <ul style="margin-left: 1.25rem; margin-top: 0.375rem; line-height: 1.5;">
+                <li><strong>Kategori A (TER A):</strong> Untuk status PTKP TK/0, TK/1, dan K/0.</li>
+                <li><strong>Kategori B (TER B):</strong> Untuk status PTKP TK/2, TK/3, K/1, dan K/2.</li>
+                <li><strong>Kategori C (TER C):</strong> Untuk status PTKP K/3.</li>
+                <li><strong>Status Pegawai:</strong> Pilih Tetap (TER Bulanan), Tidak Tetap/Freelance (DPP 50% x 5%), atau Pesangon (PPh Final PP 68/2009).</li>
+            </ul>
+        </div>
+
+        <form method="POST">
+            <div class="form-group">
+                <label>Nama Pegawai</label>
+                <input type="text" name="nama" required placeholder="Budi Santoso" value="{{ result.nama if result else '' }}">
+            </div>
+            <div class="form-group">
+                <label>Penghasilan Bruto Sebulan (Rp)</label>
+                <input type="number" step="any" name="bruto" required placeholder="8000000" value="{{ result.bruto if result else '' }}">
+            </div>
+            <div class="form-group">
+                <label>Kategori TER PTKP</label>
+                <select name="kategori" required>
+                    <option value="A" {% if result and result.kategori == 'A' %}selected{% endif %}>Kategori A (TK/0, TK/1, K/0)</option>
+                    <option value="B" {% if result and result.kategori == 'B' %}selected{% endif %}>Kategori B (TK/2, TK/3, K/1, K/2)</option>
+                    <option value="C" {% if result and result.kategori == 'C' %}selected{% endif %}>Kategori C (K/3)</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Status / Jenis Penghasilan</label>
+                <select name="status_pegawai" required>
+                    <option value="tetap" {% if result and result.status_pegawai == 'tetap' %}selected{% endif %}>Pegawai Tetap (TER Bulanan)</option>
+                    <option value="tidak_tetap" {% if result and result.status_pegawai == 'tidak_tetap' %}selected{% endif %}>Pegawai Tidak Tetap / Freelance (DPP 50%)</option>
+                    <option value="pesangon" {% if result and result.status_pegawai == 'pesangon' %}selected{% endif %}>Pesangon (PPh Final PP 68/2009)</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Tunjangan / Bonus Tambahan (Rp)</label>
+                <input type="number" step="any" name="bonus" placeholder="0" value="{{ result.bonus if result else '0' }}">
+            </div>
+            <div class="form-group">
+                <label>Natura / Kenikmatan (Fasilitas Kantor) (Rp)</label>
+                <input type="number" step="any" name="natura" placeholder="0" value="{{ result.natura if result else '0' }}">
+            </div>
+            <button type="submit" class="btn">Hitung PPh 21</button>
+        </form>
+
+        {% if result %}
+        <div class="result-box">
+            <h3>Hasil Perhitungan PPh 21</h3>
+            <div class="result-row" style="margin-top: 1rem;"><span>Nama Pegawai:</span> <strong>{{ result.nama }}</strong></div>
+            <div class="result-row"><span>Gaji Pokok / Bruto Utama:</span> <strong>Rp {{ "{:,.2f}".format(result.bruto).replace(',', 'X').replace('.', ',').replace('X', '.') }}</strong></div>
+            <div class="result-row"><span>Bonus / Tunjangan:</span> <strong>Rp {{ "{:,.2f}".format(result.bonus).replace(',', 'X').replace('.', ',').replace('X', '.') }}</strong></div>
+            <div class="result-row"><span>Natura / Kenikmatan:</span> <strong>Rp {{ "{:,.2f}".format(result.natura).replace(',', 'X').replace('.', ',').replace('X', '.') }}</strong></div>
+            <div class="result-row" style="border-top: 1px solid var(--border); padding-top: 0.5rem;"><span>Total Penghasilan Bruto:</span> <strong>Rp {{ "{:,.2f}".format(result.total_bruto).replace(',', 'X').replace('.', ',').replace('X', '.') }}</strong></div>
+            <div class="result-row"><span>Skema / Kategori:</span> <strong>{{ result.status_pegawai | upper }} (TER Kat. {{ result.kategori }} - {{ result.persentase }}%)</strong></div>
+            <div class="result-row"><span>Potongan PPh 21:</span> <strong style="color: #dc2626;">Rp {{ "{:,.2f}".format(result.pajak).replace(',', 'X').replace('.', ',').replace('X', '.') }}</strong></div>
+            <div class="result-row"><span>Penghasilan Netto Diterima:</span> <strong style="color: #16a34a;">Rp {{ "{:,.2f}".format(result.neto).replace(',', 'X').replace('.', ',').replace('X', '.') }}</strong></div>
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>

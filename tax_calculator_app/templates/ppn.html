@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kalkulator Rekonsiliasi PPN</title>
+    <style>
+        :root {
+            --bg-main: #f1f5f9;
+            --card-bg: #ffffff;
+            --primary: #0284c7;
+            --primary-hover: #0369a1;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --radius: 0.75rem;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', system-ui, -apple-system, sans-serif; }
+        body { background-color: var(--bg-main); color: var(--text-main); padding: 2rem; max-width: 800px; margin: 0 auto; }
+        .card { background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius); padding: 2rem; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); margin-bottom: 1.5rem; }
+        h1 { color: var(--primary); font-size: 1.5rem; margin-bottom: 1.5rem; }
+        .form-group { margin-bottom: 1.25rem; }
+        label { display: block; font-weight: 600; font-size: 0.875rem; margin-bottom: 0.5rem; }
+        input { width: 100%; padding: 0.75rem; border: 1px solid var(--border); border-radius: 0.5rem; font-size: 0.875rem; background: #fff; }
+        .btn { background: var(--primary); color: #fff; padding: 0.75rem 1.5rem; border: none; border-radius: 0.5rem; font-weight: 600; cursor: pointer; width: 100%; }
+        .btn:hover { background: var(--primary-hover); }
+        .result-box { background: #f8fafc; border: 1px solid var(--border); border-radius: 0.5rem; padding: 1.5rem; margin-top: 1.5rem; }
+        .result-row { display: flex; justify-content: space-between; margin-bottom: 0.75rem; font-size: 0.95rem; }
+        .result-row strong { color: var(--text-main); }
+        .back-link { display: inline-block; margin-bottom: 1rem; color: var(--primary); text-decoration: none; font-weight: 600; font-size: 0.875rem; }
+        .status-badge { display: inline-block; padding: 0.25rem 0.75rem; border-radius: 9999px; font-weight: bold; color: #fff; font-size: 0.85rem; }
+        .kurang-bayar { background: #dc2626; }
+        .lebih-bayar { background: #16a34a; }
+        .nihil { background: #64748b; }
+    </style>
+</head>
+<body>
+    <a href="/" class="back-link">← Kembali ke Menu Utama</a>
+    <div class="card">
+        <h1>Kalkulator Rekonsiliasi PPN (Tarif 12% - Berlaku 2026)</h1>
+        
+        <div style="background: #f8fafc; border-left: 4px solid var(--primary); padding: 1rem; margin-bottom: 1.5rem; border-radius: 0.375rem; font-size: 0.875rem; color: #334155;">
+            <strong>Panduan Singkat PPN:</strong>
+            <ul style="margin-left: 1.25rem; margin-top: 0.375rem; line-height: 1.5;">
+                <li><strong>DPP Penjualan (Keluaran):</strong> Total Dasar Pengenaan Pajak dari faktur pajak keluaran atas barang/jasa yang Anda jual.</li>
+                <li><strong>DPP Pembelian (Masukan):</strong> Total Dasar Pengenaan Pajak atas pembelian/biaya operasional yang sah dari vendor (dapat dikreditkan).</li>
+                <li><strong>Tarif:</strong> Mengikuti ketentuan tarif PPN 12% sesuai regulasi UU HPP terbaru.</li>
+            </ul>
+        </div>
+
+        <form method="POST">
+            <div class="form-group">
+                <label>Total DPP Penjualan / Keluaran (Rp)</label>
+                <input type="number" step="any" name="dpp_keluaran" required placeholder="50000000" value="{{ result.dpp_keluaran if result else '' }}">
+            </div>
+            <div class="form-group">
+                <label>Total DPP Pembelian / Masukan (Rp)</label>
+                <input type="number" step="any" name="dpp_masukan" required placeholder="30000000" value="{{ result.dpp_masukan if result else '' }}">
+            </div>
+            <button type="submit" class="btn">Hitung Posisi PPN</button>
+        </form>
+
+        {% if result %}
+        <div class="result-box">
+            <h3>Hasil Rekonsiliasi SPT Masa PPN</h3>
+            <div class="result-row" style="margin-top: 1rem;"><span>PPN Keluaran (12% dari DPP Penjualan):</span> <strong>Rp {{ "{:,.2f}".format(result.ppn_keluaran).replace(',', 'X').replace('.', ',').replace('X', '.') }}</strong></div>
+            <div class="result-row"><span>PPN Masukan (12% dari DPP Pembelian):</span> <strong>Rp {{ "{:,.2f}".format(result.ppn_masukan).replace(',', 'X').replace('.', ',').replace('X', '.') }}</strong></div>
+            <div class="result-row" style="border-top: 1px solid var(--border); padding-top: 0.75rem; margin-top: 0.75rem;">
+                <span>Status PPN Masa Ini:</span>
+                <span class="status-badge {% if 'Kurang' in result.status %}kurang-bayar{% elif 'Lebih' in result.status %}lebih-bayar{% else %}nihil{% endif %}">
+                    {{ result.status }} (Rp {{ "{:,.2f}".format(result.selisih).replace(',', 'X').replace('.', ',').replace('X', '.') }})
+                </span>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>

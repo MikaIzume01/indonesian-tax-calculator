@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kalkulator Pajak Otomatis (PPh 21 & PPN 2026)</title>
+    <style>
+        :root {
+            --bg-main: #f1f5f9;
+            --card-bg: #ffffff;
+            --primary: #0284c7;
+            --primary-hover: #0369a1;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --radius: 0.75rem;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', system-ui, -apple-system, sans-serif; }
+        body { background-color: var(--bg-main); color: var(--text-main); padding: 3rem; max-width: 900px; margin: 0 auto; }
+        h1 { color: var(--text-main); font-size: 1.75rem; margin-bottom: 0.5rem; text-align: center; }
+        p.subtitle { text-align: center; color: var(--text-muted); margin-bottom: 2.5rem; font-size: 0.95rem; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem; }
+        .card { background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius); padding: 2rem; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); display: flex; flex-direction: column; justify-content: space-between; transition: transform 0.2s, box-shadow 0.2s; }
+        .card:hover { transform: translateY(-3px); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05); }
+        .card h2 { color: var(--primary); font-size: 1.25rem; margin-bottom: 0.75rem; }
+        .card p { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem; line-height: 1.5; }
+        .btn { background: var(--primary); color: #fff; padding: 0.75rem 1.25rem; border: none; border-radius: 0.5rem; font-weight: 600; cursor: pointer; text-align: center; text-decoration: none; display: block; }
+        .btn:hover { background: var(--primary-hover); }
+    </style>
+</head>
+<body>
+    <h1>Kalkulator Perpajakan Indonesia (Standar 2026)</h1>
+    <p class="subtitle">Sistem Perhitungan Pajak Penghasilan (PPh 21 TER) dan PPN (12%) Terintegrasi</p>
+    
+    <div class="grid">
+        <div class="card">
+            <div>
+                <h2>Kalkulator PPh 21 (TER)</h2>
+                <p>Hitung potongan PPh Pasal 21 bulanan dan tahunan dengan skema Tarif Efektif Rata-rata (TER), mencakup Pegawai Tetap, Non-Pegawai, Bonus, dan Natura.</p>
+            </div>
+            <a href="/pph21" class="btn">Buka Kalkulator PPh 21</a>
+        </div>
+
+        <div class="card">
+            <div>
+                <h2>Kalkulator Rekonsiliasi PPN (12%)</h2>
+                <p>Rekonsiliasi SPT Masa PPN antara Pajak Keluaran dan Masukan berdasarkan tarif efektif terbaru sesuai ketentuan undang-undang.</p>
+            </div>
+            <a href="/ppn" class="btn">Buka Kalkulator PPN</a>
+        </div>
+    </div>
+</body>
+</html>
